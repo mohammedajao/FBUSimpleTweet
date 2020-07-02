@@ -53,6 +53,8 @@ public class ComposeDialogFragment extends DialogFragment {
     private Button mTweetBtn;
     private ImageButton mCloseDialog;
 
+    private String mUserToReplyTo;
+
     private FragmentComposeBinding binding;
     private TwitterClient client;
     private ComposeReader activity;
@@ -85,6 +87,11 @@ public class ComposeDialogFragment extends DialogFragment {
         activity = (ComposeReader) getActivity();
         client = TwitterApplication.getRestClient(ctx);
         user = client.getUser();
+
+        Bundle data = this.getArguments();
+        if(data != null) {
+            mUserToReplyTo = data.getString("name");
+        }
 
         return view;
     }
@@ -121,6 +128,9 @@ public class ComposeDialogFragment extends DialogFragment {
         mScreenName.setText(user.name);
         mUsername.setText(user.screenName);
         mCounter.setText(Integer.toString(MAX_LENGTH_TWEET));
+        if(mUserToReplyTo != null) {
+            mEditText.setText("@" + mUserToReplyTo);
+        }
         Glide.with(ctx)
                 .load(user.profileImageUrl)
                 .transform(new RoundedCorners(AVATAR_MARGIN))

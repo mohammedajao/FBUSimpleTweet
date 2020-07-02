@@ -45,12 +45,17 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
 
     private EndlessRecyclerViewScrollListener scrollListener;
 
+    public interface OnClickListener {
+        public void onClick(Tweet t);
+    }
+
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
     SwipeRefreshLayout swipeContainer;
     MenuItem miActionProgressItem;
+    OnClickListener onClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +86,17 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
             }
         });
 
+        onClickListener = new OnClickListener() {
+            public void onClick(Tweet tweet) {
+                Bundle bundle = new Bundle();
+                bundle.putString("name", tweet.user.screenName);
+                showComposeDialogReply(bundle);
+            }
+        };
+
         rvTweets = binding.rvTweets;
         tweets = new ArrayList<Tweet>();
-        adapter = new TweetsAdapter(this, tweets);
+        adapter = new TweetsAdapter(this, tweets, onClickListener);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(adapter);
@@ -190,6 +203,13 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     private void showComposeDialog() {
         FragmentManager fm = getSupportFragmentManager();
         ComposeDialogFragment composeDialogFragment= ComposeDialogFragment.newInstance("Some Title");
+        composeDialogFragment.show(fm, "fragment_compose");
+    }
+
+    private void showComposeDialogReply(Bundle data) {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeDialogFragment composeDialogFragment= ComposeDialogFragment.newInstance("Some Title");
+        composeDialogFragment.setArguments(data);
         composeDialogFragment.show(fm, "fragment_compose");
     }
 

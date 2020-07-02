@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import java.util.List;
@@ -23,11 +25,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public static final String TAG = "TweetsAdapter";
     Context mContext;
     List<Tweet> mTweets;
+    TimelineActivity.OnClickListener mOnClickListener;
 
 
-    public TweetsAdapter(Context context, List<Tweet> tweets) {
+    public TweetsAdapter(Context context, List<Tweet> tweets, TimelineActivity.OnClickListener onClickListener) {
         this.mContext = context;
         this.mTweets = tweets;
+        this.mOnClickListener = onClickListener;
     }
 
     @NonNull
@@ -66,11 +70,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvScreenName;
         TextView tvRelativeTime;
         TextView tvUsername;
+        Tweet mTweet;
+        TextView tvRTCount;
+        TextView tvFaveCount;
         GridLayout gridLayout;
         ImageView ivMedia1;
         ImageView ivMedia2;
         ImageView ivMedia3;
         ImageView ivMedia4;
+
+        ImageButton replyButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,9 +94,21 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             ivMedia2 = itemView.findViewById(R.id.ivMedia2);
             ivMedia3 = itemView.findViewById(R.id.ivMedia3);
             ivMedia4 = itemView.findViewById(R.id.ivMedia4);
+            tvRTCount = itemView.findViewById(R.id.tvRetweetCount);
+            tvFaveCount = itemView.findViewById(R.id.tvFaveCount);
+            replyButton = itemView.findViewById(R.id.ibReply);
+
+            replyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i(TAG, "Consumed on click event!");
+                    mOnClickListener.onClick(mTweet);
+                }
+            });
         }
 
         public void bind(Tweet tweet) {
+            mTweet = tweet;
             tvBody.setText(tweet.body);
             tvUsername.setText("@" + tweet.user.screenName);
             tvScreenName.setText(tweet.user.name);

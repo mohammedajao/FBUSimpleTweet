@@ -7,6 +7,67 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clDetailView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/glMedia"
+        android:layout_alignStart="@+id/tvBody"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp">
+
+        <ImageButton
+            android:id="@+id/ibReply"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="#FFFFFF"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_reply_24" />
+
+        <ImageButton
+            android:id="@+id/ibRetweet"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="0"
+            android:background="#FFFFFF"
+            app:layout_constraintEnd_toStartOf="@+id/ibFavourites"
+            app:layout_constraintStart_toEndOf="@+id/ibReply"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_retweet" />
+
+        <ImageButton
+            android:id="@+id/ibFavourites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvFaveCount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_star_24" />
+
+        <TextView
+            android:id="@+id/tvRetweetCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="999"
+            app:layout_constraintBottom_toBottomOf="@+id/ibRetweet"
+            app:layout_constraintStart_toEndOf="@+id/ibRetweet"
+            app:layout_constraintTop_toTopOf="@+id/ibRetweet" />
+
+        <TextView
+            android:id="@+id/tvFaveCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="999"
+            app:layout_constraintBottom_toBottomOf="@+id/ibFavourites"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ibFavourites" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.gridlayout.widget.GridLayout
         android:id="@+id/glMedia"
         android:layout_width="wrap_content"
@@ -92,6 +153,7 @@
         android:layout_below="@+id/tvScreenName"
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
+        android:autoLink="all"
         android:layout_toEndOf="@+id/ivProfileImage"
         android:text="TextView"
         tools:text="This is my tweet!" />
