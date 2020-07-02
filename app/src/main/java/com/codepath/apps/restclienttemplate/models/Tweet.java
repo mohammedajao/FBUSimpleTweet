@@ -16,6 +16,7 @@ import java.util.Locale;
 @Parcel
 public class Tweet {
     public static final String TAG = "Tweet";
+    public long id;
     public String body;
     public String createdAt;
     public User user;
@@ -27,6 +28,7 @@ public class Tweet {
         Tweet tweet = new Tweet();
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
+        tweet.id = jsonObject.getLong("id");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.media = new ArrayList<String>();
         if(jsonObject.has("extended_entities")) {

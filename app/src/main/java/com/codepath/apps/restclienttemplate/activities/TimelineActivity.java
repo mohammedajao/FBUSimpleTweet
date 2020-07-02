@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.widget.Toolbar;
 
+import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TweetsAdapter;
 import com.codepath.apps.restclienttemplate.TwitterApplication;
@@ -41,6 +42,9 @@ import okhttp3.Headers;
 public class TimelineActivity extends AppCompatActivity implements ComposeDialogFragment.ComposeReader {
     public static final int REQUEST_CODE = 20;
     public static final String TAG = "TimelineActivity";
+
+    private EndlessRecyclerViewScrollListener scrollListener;
+
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -80,10 +84,46 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         rvTweets = binding.rvTweets;
         tweets = new ArrayList<Tweet>();
         adapter = new TweetsAdapter(this, tweets);
-
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(adapter);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                showProgressBar();
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                Log.i(TAG, "OnLoadMore: " + page);
+                loadNextDataFromApi(page);
+            }
+        };
+        rvTweets.addOnScrollListener(scrollListener);
+
         populateHomeTimeline();
+    }
+
+    public void loadNextDataFromApi(int offset) {
+        // Send an API request to retrieve appropriate paginated data
+        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
+        client.getNextPageOfTweets(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    List<Tweet> tweetData = Tweet.fromJsonArray(jsonArray);
+                    adapter.addAll(tweetData);
+                    hideProgressBar();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "OnFailure: " + response, throwable);
+            }
+        }, tweets.get(tweets.size() - 1).id);
     }
 
     @Override
