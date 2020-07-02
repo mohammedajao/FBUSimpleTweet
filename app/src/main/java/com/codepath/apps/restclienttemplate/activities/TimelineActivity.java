@@ -1,13 +1,11 @@
 package com.codepath.apps.restclienttemplate.activities;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
@@ -47,11 +47,17 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     public static final int REQUEST_CODE = 20;
     public static final String TAG = "TimelineActivity";
 
+    public static final int DETAIL_VIEW_FLAG_REPLY = 0;
+    public static final int DETAIL_VIEW_FLAG_RETWEET = 1;
+    public static final int DETAIL_VIEW_FLAG_LIKE = 2;
+
+    public static final String WARNING_INTERNET_STRING = "Please enable the internet in order to user this feature!";
+
     private EndlessRecyclerViewScrollListener scrollListener;
     TweetDao  tweetDao;
 
     public interface OnClickListener {
-        public void onClick(Tweet t);
+        public void onClick(Tweet t, int flag);
     }
 
     TwitterClient client;
@@ -61,6 +67,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     SwipeRefreshLayout swipeContainer;
     MenuItem miActionProgressItem;
     OnClickListener onClickListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +95,25 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
             @Override
             public void onRefresh() {
                 Log.i(TAG, "Fetching new data!");
-                showProgressBar();
                 populateHomeTimeline();
             }
         });
 
         onClickListener = new OnClickListener() {
-            public void onClick(Tweet tweet) {
-                Bundle bundle = new Bundle();
-                bundle.putString("name", tweet.user.screenName);
-                showComposeDialogReply(bundle);
+            public void onClick(Tweet tweet, int flag) {
+                switch(flag) {
+                    case DETAIL_VIEW_FLAG_REPLY:
+                        Bundle bundle = new Bundle();
+                        bundle.putString("name", tweet.user.screenName);
+                        showComposeDialogReply(bundle);
+                        return;
+                    case DETAIL_VIEW_FLAG_RETWEET:
+                        tweets.add(0, tweet);
+                        adapter.notifyItemInserted(0);
+                        return;
+                    case DETAIL_VIEW_FLAG_LIKE:
+                        return;
+                }
             }
         };
 
@@ -184,6 +200,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     }
 
     private void populateHomeTimeline() {
+        showProgressBar();
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -229,16 +246,24 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     }
 
     private void showComposeDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        ComposeDialogFragment composeDialogFragment= ComposeDialogFragment.newInstance("Some Title");
-        composeDialogFragment.show(fm, "fragment_compose");
+        if(client.getUser() != null) {
+            FragmentManager fm = getSupportFragmentManager();
+            ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title");
+            composeDialogFragment.show(fm, "fragment_compose");
+        } else {
+            Toast.makeText(this, WARNING_INTERNET_STRING, Toast.LENGTH_LONG);
+        }
     }
 
     private void showComposeDialogReply(Bundle data) {
-        FragmentManager fm = getSupportFragmentManager();
-        ComposeDialogFragment composeDialogFragment= ComposeDialogFragment.newInstance("Some Title");
-        composeDialogFragment.setArguments(data);
-        composeDialogFragment.show(fm, "fragment_compose");
+        if(client.getUser() != null) {
+            FragmentManager fm = getSupportFragmentManager();
+            ComposeDialogFragment composeDialogFragment = ComposeDialogFragment.newInstance("Some Title");
+            composeDialogFragment.setArguments(data);
+            composeDialogFragment.show(fm, "fragment_compose");
+        } else {
+            Toast.makeText(this, WARNING_INTERNET_STRING, Toast.LENGTH_LONG);
+        }
     }
 
     @Override

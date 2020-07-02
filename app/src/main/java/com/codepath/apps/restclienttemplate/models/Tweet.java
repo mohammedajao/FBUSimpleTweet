@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.models;
 
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -38,16 +39,32 @@ public class Tweet {
     @ColumnInfo
     public long userId;
 
+    @ColumnInfo
+    public long likeCount;
+
+    @ColumnInfo
+    public long retweetCount;
+
     @Ignore
     public User user;
 
     @Ignore
     public ArrayList<String> media;
 
+    @Ignore
+    public boolean liked = false;
+
+    @ColumnInfo
+    public boolean retweetedStatus = false;
+
     public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
+        tweet.retweetedStatus = jsonObject.has("retweeted_status");
+        tweet.liked = jsonObject.getBoolean("favorited");
+        tweet.likeCount = jsonObject.getLong("favorite_count");
+        tweet.retweetCount = jsonObject.getLong("retweet_count");
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.id = jsonObject.getLong("id");

@@ -49,6 +49,7 @@ public class ComposeDialogFragment extends DialogFragment {
     private TextView mCounter;
     private TextView mScreenName;
     private TextView mUsername;
+    private  TextView mInReplyTo;
     private ImageView mAvatar;
     private Button mTweetBtn;
     private ImageButton mCloseDialog;
@@ -124,6 +125,7 @@ public class ComposeDialogFragment extends DialogFragment {
         mUsername = binding.tvName;
         mAvatar = binding.ivAvatar;
         mCloseDialog = binding.ibCloseDialog;
+        mInReplyTo = binding.tvInReplyTo;
 
         if(user != null)
             mScreenName.setText(user.name);
@@ -131,6 +133,7 @@ public class ComposeDialogFragment extends DialogFragment {
         mCounter.setText(Integer.toString(MAX_LENGTH_TWEET));
         if(mUserToReplyTo != null) {
             mEditText.setText("@" + mUserToReplyTo);
+            mInReplyTo.setText("In reply to @" + mUserToReplyTo);
         }
         Glide.with(ctx)
                 .load(user.profileImageUrl)
