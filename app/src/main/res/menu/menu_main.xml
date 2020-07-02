@@ -4,8 +4,19 @@
 
     <item
         android:id="@+id/miCompose"
-        android:icon="@drawable/ic_baseline_edit_24"
+        android:color="@color/white"
+        android:icon="@drawable/ic_vector_compose"
+        android:tint="@color/white"
+        android:backgroundTint="@color/white"
         android:title="Compose"
         android:visible="true"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/miActionProgress"
+        android:title="Loading..."
+        android:visible="false"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        app:actionLayout="@layout/action_view_progress" />
 </menu>

@@ -1,8 +1,10 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.helpers;
 
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.codepath.apps.restclienttemplate.R;
 
 /*
   Source: http://www.littlerobots.nl/blog/Handle-Android-RecyclerView-Clicks/

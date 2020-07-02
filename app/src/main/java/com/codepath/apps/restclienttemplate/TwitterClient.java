@@ -1,13 +1,21 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.oauth.OAuthBaseClient;
 import com.github.scribejava.apis.FlickrApi;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.api.BaseApi;
+
+import org.json.JSONException;
+
+import java.util.UUID;
+
+import okhttp3.Headers;
 
 /*
  * 
@@ -22,10 +30,12 @@ import com.github.scribejava.core.builder.api.BaseApi;
  * 
  */
 public class TwitterClient extends OAuthBaseClient {
+	public static final String TAG = "TwitterClient";
 	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
 	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
 	public static final String REST_CONSUMER_KEY = BuildConfig.CONSUMER_KEY;       // Change this inside apikey.properties
 	public static final String REST_CONSUMER_SECRET = BuildConfig.CONSUMER_SECRET; // Change this inside apikey.properties
+	private static User user;
 
 	// Landing page to indicate the OAuth flow worked in case Chrome for Android 25+ blocks navigation back to the app.
 	public static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html";
@@ -41,6 +51,21 @@ public class TwitterClient extends OAuthBaseClient {
 				null,  // OAuth2 scope, null for OAuth1
 				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
+		getAuthenticatedUser(new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(int statusCode, Headers headers, JSON json) {
+				try {
+					user = User.fromJson(json.jsonObject);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+				Log.e(TAG, "Failed to get User details for client: " + response, throwable);
+			}
+		});
 	}
 	// CHANGE THIS
 	// DEFINE METHODS for different API endpoints here
@@ -59,6 +84,16 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
 		client.post(apiUrl, params, "", handler);
+	}
+
+	public void getAuthenticatedUser(JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("account/verify_credentials.json");
+		RequestParams params = new RequestParams();
+		client.get(apiUrl, params, handler);
+	}
+
+	public User getUser() {
+		return user;
 	}
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
