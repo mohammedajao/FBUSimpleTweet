@@ -62,7 +62,7 @@
             app:layout_constraintBottom_toTopOf="@+id/btnTweet"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/llReplyEmbellish" />
 
         <Button
             android:id="@+id/btnTweet"
@@ -91,13 +91,13 @@
             android:background="#FFFFFF"
             android:backgroundTint="#FFFFFF"
             android:tint="@color/twitter_blue"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintBottom_toTopOf="@+id/llReplyEmbellish"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_close_24" />
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/llReplyEmbellish"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

@@ -9,6 +9,9 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.codepath.apps.restclienttemplate.TwitterApplication;
+import com.codepath.apps.restclienttemplate.TwitterClient;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,22 +55,34 @@ public class Tweet {
     public ArrayList<String> media;
 
     @Ignore
-    public boolean liked = false;
+    public boolean liked;
 
     @ColumnInfo
-    public boolean retweetedStatus = false;
+    public boolean retweetedStatus;
+
+    @ColumnInfo
+    public boolean retweeted;
+
+    @Ignore
+    public User retweetedUser;
 
     public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
+        tweet.id = jsonObject.getLong("id");
+        Log.i(TAG, jsonObject.toString());
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
         tweet.retweetedStatus = jsonObject.has("retweeted_status");
+        if(tweet.retweetedStatus) {
+            tweet.retweetedUser = User.fromJson(jsonObject.getJSONObject("user"));
+            jsonObject = jsonObject.getJSONObject("retweeted_status");
+        }
         tweet.liked = jsonObject.getBoolean("favorited");
         tweet.likeCount = jsonObject.getLong("favorite_count");
         tweet.retweetCount = jsonObject.getLong("retweet_count");
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
-        tweet.id = jsonObject.getLong("id");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.userId = tweet.user.id;
         tweet.media = new ArrayList<String>();

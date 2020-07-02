@@ -35,7 +35,7 @@ public class TwitterClient extends OAuthBaseClient {
 	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
 	public static final String REST_CONSUMER_KEY = BuildConfig.CONSUMER_KEY;       // Change this inside apikey.properties
 	public static final String REST_CONSUMER_SECRET = BuildConfig.CONSUMER_SECRET; // Change this inside apikey.properties
-	private static User user;
+	public static User user;
 
 	// Landing page to indicate the OAuth flow worked in case Chrome for Android 25+ blocks navigation back to the app.
 	public static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html";
@@ -110,6 +110,13 @@ public class TwitterClient extends OAuthBaseClient {
 
 	public void unlike(long tweetId, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("favorites/destroy.json");
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		client.post(apiUrl,params, "", handler);
+	}
+
+	public void undoRetweet(long tweetId, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/destroy.json");
 		RequestParams params = new RequestParams();
 		params.put("id", tweetId);
 		client.post(apiUrl,params, "", handler);

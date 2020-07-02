@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,8 @@ public class ComposeDialogFragment extends DialogFragment {
     private ImageButton mCloseDialog;
 
     private String mUserToReplyTo;
+
+    LinearLayout llReplyEmbelish;
 
     private FragmentComposeBinding binding;
     private TwitterClient client;
@@ -126,14 +129,18 @@ public class ComposeDialogFragment extends DialogFragment {
         mAvatar = binding.ivAvatar;
         mCloseDialog = binding.ibCloseDialog;
         mInReplyTo = binding.tvInReplyTo;
+        llReplyEmbelish = binding.llReplyEmbellish;
 
         if(user != null)
             mScreenName.setText(user.name);
         mUsername.setText(user.screenName);
         mCounter.setText(Integer.toString(MAX_LENGTH_TWEET));
         if(mUserToReplyTo != null) {
+            llReplyEmbelish.setVisibility(View.VISIBLE);
             mEditText.setText("@" + mUserToReplyTo);
             mInReplyTo.setText("In reply to @" + mUserToReplyTo);
+        } else {
+            llReplyEmbelish.setVisibility(View.GONE);
         }
         Glide.with(ctx)
                 .load(user.profileImageUrl)

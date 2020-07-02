@@ -50,6 +50,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     public static final int DETAIL_VIEW_FLAG_REPLY = 0;
     public static final int DETAIL_VIEW_FLAG_RETWEET = 1;
     public static final int DETAIL_VIEW_FLAG_LIKE = 2;
+    public static final int DETAIL_VIEW_FLAG_UNDO_RETWEET = 3;
 
     public static final String WARNING_INTERNET_STRING = "Please enable the internet in order to user this feature!";
 
@@ -110,6 +111,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
                     case DETAIL_VIEW_FLAG_RETWEET:
                         tweets.add(0, tweet);
                         adapter.notifyItemInserted(0);
+                        return;
+                    case DETAIL_VIEW_FLAG_UNDO_RETWEET:
                         return;
                     case DETAIL_VIEW_FLAG_LIKE:
                         return;
