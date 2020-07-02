@@ -113,8 +113,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvUsername.setText("@" + tweet.user.screenName);
             tvScreenName.setText(tweet.user.name);
             tvRelativeTime.setText(tweet.getRelativeTimeAgo());
-            Log.i(TAG, tweet.user.screenName + ": " + tweet.media.toString());
-            if(!tweet.media.isEmpty()) {
+            if(tweet.media != null && !tweet.media.isEmpty()) {
                 gridLayout.setVisibility(View.VISIBLE);
                 ImageView image;
                 for (int i = 0; i < 4; i++) {

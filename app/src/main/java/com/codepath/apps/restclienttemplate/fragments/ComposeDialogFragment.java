@@ -125,7 +125,8 @@ public class ComposeDialogFragment extends DialogFragment {
         mAvatar = binding.ivAvatar;
         mCloseDialog = binding.ibCloseDialog;
 
-        mScreenName.setText(user.name);
+        if(user != null)
+            mScreenName.setText(user.name);
         mUsername.setText(user.screenName);
         mCounter.setText(Integer.toString(MAX_LENGTH_TWEET));
         if(mUserToReplyTo != null) {
